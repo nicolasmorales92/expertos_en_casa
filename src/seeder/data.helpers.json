@@ -1,0 +1,170 @@
+[
+  {
+    "first_name": "Juan",
+    "last_name": "Pérez",
+    "email": "juan.gas@example.com",
+    "password": "pass1234!",
+    "dni": "30123456",
+    "role": "Professional",
+    "province": "Buenos Aires",
+    "city": "CABA",
+    "address": "Av. Corrientes 1234",
+    "professionalProfile": {
+      "category": "Gasista",
+      "license": "GAS-111",
+      "status": "Aprobado",
+      "description": "Gasista matriculado experto en calderas.",
+      "chats": [],
+      "appointments": []
+    }
+  },
+  {
+    "first_name": "Pedro",
+    "last_name": "Gómez",
+    "email": "pedro.gas@example.com",
+    "password": "pass1234!",
+    "dni": "31123456",
+    "role": "Professional",
+    "province": "Córdoba",
+    "city": "Carlos Paz",
+    "address": "Calle Falsa 123",
+    "professionalProfile": {
+      "category": "Gasista",
+      "status": "Aprobado",
+      "description": "Instalaciones domiciliarias de confianza.",
+      "chats": [],
+      "appointments": []
+    }
+  },
+  {
+    "first_name": "Roberto",
+    "last_name": "Sánchez",
+    "email": "roberto.gas@example.com",
+    "password": "pass1234!",
+    "dni": "32123456",
+    "role": "Professional",
+    "province": "Santa Fe",
+    "city": "Rosario",
+    "address": "Bv. Oroño 456",
+    "professionalProfile": {
+      "category": "Gasista",
+      "license": "GAS-999",
+      "status": "Rechazado",
+      "description": "Servicios de gas en general.",
+      "chats": [],
+      "appointments": []
+    }
+  },
+  {
+    "first_name": "Ricardo",
+    "last_name": "López",
+    "email": "ricardo.elec@example.com",
+    "password": "pass1234!",
+    "dni": "33123456",
+    "role": "Professional",
+    "province": "Mendoza",
+    "city": "Mendoza",
+    "address": "San Martín 789",
+    "professionalProfile": {
+      "category": "Electricista",
+      "license": "ELE-222",
+      "status": "Aprobado",
+      "description": "Electricista industrial y tableros.",
+      "chats": [],
+      "appointments": []
+    }
+  },
+  {
+    "first_name": "Marcos",
+    "last_name": "Torres",
+    "email": "marcos.elec@example.com",
+    "password": "pass1234!",
+    "dni": "34123456",
+    "role": "Professional",
+    "province": "Buenos Aires",
+    "city": "La Plata",
+    "address": "Calle 7 1420",
+    "professionalProfile": {
+      "category": "Electricista",
+      "status": "Aprobado",
+      "description": "Urgencias eléctricas 24hs.",
+      "chats": [],
+      "appointments": []
+    }
+  },
+  {
+    "first_name": "Javier",
+    "last_name": "Ruiz",
+    "email": "javier.elec@example.com",
+    "password": "pass1234!",
+    "dni": "35123456",
+    "role": "Professional",
+    "province": "Tucumán",
+    "city": "San Miguel",
+    "address": "Av. Mitre 900",
+    "professionalProfile": {
+      "category": "Electricista",
+      "license": "ELE-888",
+      "status": "Rechazado",
+      "description": "Instalaciones nuevas y reformas.",
+      "chats": [],
+      "appointments": []
+    }
+  },
+  {
+    "first_name": "Luis",
+    "last_name": "Castro",
+    "email": "luis.plom@example.com",
+    "password": "pass1234!",
+    "dni": "36123456",
+    "role": "Professional",
+    "province": "Salta",
+    "city": "Salta",
+    "address": "Balcarce 550",
+    "professionalProfile": {
+      "category": "Plomero",
+      "license": "PLO-333",
+      "status": "Aprobado",
+      "description": "Especialista en termofusión y fugas.",
+      "chats": [],
+      "appointments": []
+    }
+  },
+  {
+    "first_name": "Hugo",
+    "last_name": "Vaca",
+    "email": "hugo.plom@example.com",
+    "password": "pass1234!",
+    "dni": "37123456",
+    "role": "Professional",
+    "province": "Neuquén",
+    "city": "Neuquén",
+    "address": "Rivadavia 112",
+    "professionalProfile": {
+      "category": "Plomero",
+      "status": "Aprobado",
+      "description": "Plomería de cocina y baño.",
+      "chats": [],
+      "appointments": []
+    }
+  },
+  {
+    "first_name": "Daniel",
+    "last_name": "Ríos",
+    "email": "daniel.plom@example.com",
+    "password": "pass1234!",
+    "dni": "38123456",
+    "role": "Professional",
+    "province": "Chubut",
+    "city": "Rawson",
+    "address": "Av. Fontana 230",
+    "professionalProfile": {
+      "category": "Plomero",
+      "license": "PLO-777",
+      "status": "Rechazado",
+      "description": "Destapes y mantenimiento.",
+      "chats": [],
+      "appointments": []
+    }
+  }
+]
