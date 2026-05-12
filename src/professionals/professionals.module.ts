@@ -4,13 +4,13 @@ import { ProfessionalsController } from './professionals.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfessionalProfile } from './entities/professional.entity';
 import { ProfessionalProfileRepository } from './professionals.repository';
-import { Chat } from '../chat/entities/chat.entity';
-import { Appointment } from '../appointments/entity/appointment.entity';
+import { UsersModule } from '../users/users.module';
+import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProfessionalProfile])],
+  imports: [TypeOrmModule.forFeature([ProfessionalProfile]), UsersModule, CategoriesModule],
   controllers: [ProfessionalsController],
   providers: [ProfessionalsService, ProfessionalProfileRepository],
-  exports: [ProfessionalsService,ProfessionalProfileRepository, TypeOrmModule]
+  exports: [ProfessionalsService, ProfessionalProfileRepository, TypeOrmModule]
 })
 export class ProfessionalsProfileModule {}

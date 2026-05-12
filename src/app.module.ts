@@ -15,6 +15,7 @@ import { ChatModule } from './chat/chat.module';
 import { Chat } from './chat/entities/chat.entity';
 import { Message } from './messages/entities/message.entity';
 import { Appointment } from './appointments/entity/appointment.entity';
+import { Categories } from './categories/entities/category.entity';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { Appointment } from './appointments/entity/appointment.entity';
       url: process.env.DATABASE_URL, 
       synchronize: true,
       dropSchema: true,
-      entities: [User, ProfessionalProfile, Chat, Message, Appointment]
+      entities: [User, ProfessionalProfile, Chat, Message, Appointment, Categories]
     }),
     UsersModule,
     CategoriesModule,

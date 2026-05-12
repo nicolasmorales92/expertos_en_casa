@@ -1,26 +1,118 @@
-import { Injectable } from '@nestjs/common';
-import { CreateProfessionalDto } from './dto/create-professional.dto';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateProfessionalDto } from './dto/update-professional.dto';
+import { CreateProfessionalProfileDto } from '../auth/dto´s/createProfessionalProfile.dto';
+import { UsersService } from '../users/users.service';
+import { ProfessionalProfileRepository } from './professionals.repository';
+import { ResponseProfessionalsDto } from './dto/response.professionals.dto';
+import { ProfessionalProfile } from './entities/professional.entity';
+import { CategoriesService } from '../categories/categories.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../users/entities/user.entity';
+import { Repository } from 'typeorm';
+import { RoleEnum } from '../users/enums/roles';
 
 @Injectable()
 export class ProfessionalsService {
-  create(createProfessionalDto: CreateProfessionalDto) {
-    return 'This action adds a new professional';
+  constructor(
+    private readonly categoriesService: CategoriesService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly professionalRepository: ProfessionalProfileRepository
+  ) { }
+  private mapToResponseDto(prof: ProfessionalProfile): ResponseProfessionalsDto {
+    return {
+      id: prof.id,
+      user: {
+        first_name: prof.user?.first_name,
+        last_name: prof.user?.last_name,
+        role: prof.user?.role
+      },
+      categories: prof.categories?.map(cat => ({ name: cat.name })) || [],
+      license: prof.license,
+      description: prof.description,
+      is_active: prof.is_active,
+      appointments: prof.appointments || []
+    };
   }
 
-  findAll() {
-    return `This action returns all professionals`;
+
+
+
+  async createProfessional(userDni: string, dto: CreateProfessionalProfileDto) {
+    const foundUser = await this.userRepository.findOneBy({dni: userDni})
+    if (!foundUser) throw new NotFoundException('Usuario no encontrado.');
+
+
+    if (dto.license) {
+      const existingLicense = await this.professionalRepository.findByLicense(dto.license);
+      if (existingLicense) throw new ConflictException('La licencia ya está en uso.');
+    }
+
+    if (foundUser.professionalProfile) {
+      throw new ConflictException('El usuario ya tiene su perfíl profesional.')
+    }
+    else {
+      foundUser.role = RoleEnum.Professional
+      await this.userRepository.save(foundUser)
+
+      const categories = await this.categoriesService.listCategories(dto.categories)
+
+      const newProfessional = await this.professionalRepository.createProfessional(
+        foundUser,
+        categories,
+        dto.license,
+        dto.description
+      );
+
+      return this.mapToResponseDto(newProfessional)
+    }
+
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} professional`;
+
+  async findProfessionals(page?: number, limit?: number): Promise<ResponseProfessionalsDto[]> {
+    let professionals: ProfessionalProfile[];
+
+
+    if (page && limit) {
+      const skip = (page - 1) * limit
+      const take = limit
+
+      professionals = await this.professionalRepository.findProfessionals(skip, take)
+    }
+    else {
+      professionals = await this.professionalRepository.findProfessionals()
+    }
+
+    return professionals.map((prof) => this.mapToResponseDto(prof))
+
   }
 
-  update(id: number, updateProfessionalDto: UpdateProfessionalDto) {
-    return `This action updates a #${id} professional`;
+
+
+  async findById(id: string): Promise<ResponseProfessionalsDto> {
+    const foundProfessional = await this.professionalRepository.findById(id)
+    if (!foundProfessional) throw new NotFoundException('Professional no encontrado')
+
+    return this.mapToResponseDto(foundProfessional)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} professional`;
+
+
+
+  async updateProfessional(id: string, updateProfessionalDto: UpdateProfessionalDto): Promise<ResponseProfessionalsDto> {
+    if (updateProfessionalDto.license) {
+      const existingLicense = await this.professionalRepository.findByLicense(updateProfessionalDto.license)
+      if (existingLicense) throw new ConflictException('Licencias ya existentes.')
+    }
+
+    return await this.professionalRepository.updateProfessional(id, updateProfessionalDto)
+  }
+
+
+
+
+  async remove(id: string) {
+    return await this.professionalRepository.remove(id)
   }
 }

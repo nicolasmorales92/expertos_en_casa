@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseEnumPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiQuery } from '@nestjs/swagger';
+import { ApiParam, ApiQuery } from '@nestjs/swagger';
 import { RoleEnum } from './enums/roles';
 
 @Controller('users')
@@ -27,16 +27,28 @@ export class UsersController {
 
   @Get(':dni')
   findOne(@Param('dni') dni: string) {
-    return this.usersService.findOne(dni);
+    return this.usersService.findByDni(dni);
   }
 
+  @ApiParam({ name: 'id', type: 'string', required: true })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  async update(
+    @Param('id') id: string, 
+    @Body() updateUserDto: UpdateUserDto) {
+    const userUpdate = await this.usersService.update(id, updateUserDto);
+
+    return{
+      message: `Usuario ${userUpdate.first_name} modificado correctamente.`,
+      data: userUpdate
+    }
   }
 
+  @ApiParam({name: 'id', type: 'string', required: true})
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const user = await this.usersService.remove(id)
+    return {
+      message: `Usuario ${user.first_name} eliminado correctamente.`
+    }
   }
 }

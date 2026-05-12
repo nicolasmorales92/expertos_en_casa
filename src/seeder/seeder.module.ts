@@ -6,12 +6,14 @@ import { UsersModule } from '../users/users.module';
 import { Chat } from '../chat/entities/chat.entity';
 import { Appointment } from '../appointments/entity/appointment.entity';
 import { Message } from '../messages/entities/message.entity';
+import { CategoriesModule } from '../categories/categories.module';
 
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]) ,
     UsersModule,
+    CategoriesModule,
     Chat,       
     Appointment, 
     Message

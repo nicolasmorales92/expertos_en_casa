@@ -1,14 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, UpdateDateColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { ProfessionalProfile } from '../../professionals/entities/professional.entity';
-
-export enum AppointmentStatus {
-  PENDIENTE = 'pendiente',
-  ACEPTADO = 'aceptado',
-  RECHAZADO = 'rechazado',
-  COMPLETADO = 'completado',
-  CANCELADO = 'cancelado',
-}
+import { AppointmentStatusEnum } from '../enum/statusAppointments.enum';
 
 @Entity('appointments')
 export class Appointment {
@@ -26,10 +19,10 @@ export class Appointment {
 
   @Column({
     type: 'enum',
-    enum: AppointmentStatus,
-    default: AppointmentStatus.PENDIENTE,
+    enum: AppointmentStatusEnum,
+    default: AppointmentStatusEnum.PENDIENTE,
   })
-  status: AppointmentStatus;
+  status: AppointmentStatusEnum;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   price: number; 

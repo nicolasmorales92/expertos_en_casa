@@ -1,26 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CategoriesRepository } from './category.repository';
 
 @Injectable()
 export class CategoriesService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+  constructor(
+    private readonly categoriesRepository: CategoriesRepository
+  ){}
+
+  async create(createCategoryDto: CreateCategoryDto) {
+    return await this.categoriesRepository.create(createCategoryDto)
+  }
+  
+  async findCategories(){
+    return await this.categoriesRepository.findCategories()
   }
 
-  findAll() {
-    return `This action returns all categories`;
+
+
+
+
+
+  async findCategoryByName(name: string) {
+    return await this.categoriesRepository.findCategoryByName(name)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
-  }
+  async listCategories(names: string[]){
+    const categories = await this.categoriesRepository.listCategories(names)
+    if(categories.length === 0) throw new BadRequestException('Categoría inválida.')
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+      return categories
   }
 }

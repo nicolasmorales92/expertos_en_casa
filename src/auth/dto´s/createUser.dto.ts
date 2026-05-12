@@ -1,12 +1,10 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString, IsStrongPassword, Length, Matches, ValidateIf, ValidateNested } from "class-validator";
 import { RoleEnum } from "../../users/enums/roles";
-import { Type } from "class-transformer";
 import { CreateProfessionalProfileDto } from "./createProfessionalProfile.dto";
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, IntersectionType, PartialType } from "@nestjs/swagger";
 
 export class CreateUserDto {
     @ApiProperty({
-        description: 'Primer nombre',
         example: 'Juan',
     })
     @IsNotEmpty()
@@ -14,7 +12,6 @@ export class CreateUserDto {
     first_name: string
 
     @ApiProperty({
-        description: 'Apellido',
         example: 'Perez',
     })
     @IsNotEmpty()
@@ -22,7 +19,6 @@ export class CreateUserDto {
     last_name: string
 
     @ApiProperty({
-        description: 'Correo electrónico del usuario (único)',
         example: 'juanperez@mail.com',
     })
     @IsNotEmpty()
@@ -30,7 +26,6 @@ export class CreateUserDto {
     email: string
 
     @ApiProperty({
-        description: 'Contraseña',
         example: 'Abc1234!',
     })
     @IsString()
@@ -39,7 +34,6 @@ export class CreateUserDto {
     password: string;
 
     @ApiProperty({
-        description: 'Documento de identificación único',
         example: '37121212',
     })
     @IsString()
@@ -47,7 +41,6 @@ export class CreateUserDto {
     dni: string
 
     @ApiProperty({
-        description: 'Provincia',
         example: 'Buenos Aires',
     })
     @IsNotEmpty()
@@ -55,7 +48,6 @@ export class CreateUserDto {
     province: string
 
     @ApiProperty({
-        description: 'Ciudad',
         example: 'San Isidro',
     })
     @IsNotEmpty()
@@ -63,7 +55,6 @@ export class CreateUserDto {
     city: string
 
     @ApiProperty({
-        description: 'Nombre de la calle y su altura',
         example: 'Av. San Martin 123',
     })
     @IsNotEmpty()
@@ -73,17 +64,16 @@ export class CreateUserDto {
     })
     address: string
 
+    @ApiProperty({
+        example: 'professional' 
+    })
     @IsOptional()
     @IsEnum(RoleEnum)
-    role?: RoleEnum
-
-    @ApiProperty({
-        description: 'Datos del profesional'
-    })
-    @ValidateIf((o) => o.role === RoleEnum.Professional)
-    @IsNotEmpty()
-    @IsNotEmptyObject()
-    @ValidateNested()
-    @Type(() => CreateProfessionalProfileDto)
-    professionalProfile?: CreateProfessionalProfileDto;
+    role?: RoleEnum 
 }
+
+
+export class CreateUserProfessionalDto extends IntersectionType(
+  CreateUserDto,
+  PartialType(CreateProfessionalProfileDto)
+) {}

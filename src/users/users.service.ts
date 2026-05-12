@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException, Query } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException  } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './users.repository';
 import { ResponseCreateUserDto } from '../auth/dto´s/reponse.createUser.dto';
@@ -31,15 +31,12 @@ export class UsersService {
         dni: info.dni,
         email: info.email,
         role: info.role,
-        category: info.professionalProfile?.category
       }
     })
   }
 
-  async findOne(dni: string): Promise<ResponseCreateUserDto> {
-    if (!dni) throw new BadRequestException('DNI inexistente')
+  async findByDni(dni: string):Promise<ResponseCreateUserDto> {
     const user = await this.userRepository.findByDni(dni)
-
     if (!user) throw new NotFoundException('Usuario no encontrado')
 
     return {
@@ -48,16 +45,33 @@ export class UsersService {
       dni: user.dni,
       email: user.email,
       role: user.role,
-      category: user.professionalProfile?.category
     }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto):Promise<ResponseCreateUserDto> {
+    const user = await this.userRepository.findById(id)
+    if(!user) throw new NotFoundException('Usuario no encontrado')
+
+    if(updateUserDto.email){
+       const userFound = await this.userRepository.findByEmail(user.email)
+       if(userFound){
+       throw new ConflictException('El email ya existe')
+       }
+    }
+
+
+    const updateUser = await this.userRepository.update(id, updateUserDto)
+    return {
+      first_name: updateUser.first_name ,
+      last_name: updateUser.last_name,
+      dni: updateUser.dni,
+      email: updateUser.email,
+      role: updateUser.role,
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+   return await this.userRepository.remove(id)
   }
 
 
@@ -70,10 +84,6 @@ export class UsersService {
     return emailExisting
   }
 
-  async findBydni(dni: string) {
-    const dniExisting = await this.userRepository.findByDni(dni)
-    if (dniExisting) throw new ConflictException('El dni ya existe')
 
-    return dniExisting
-  }
+
 }
