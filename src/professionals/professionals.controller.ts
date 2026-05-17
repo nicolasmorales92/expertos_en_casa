@@ -1,13 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { ProfessionalsService } from './professionals.service';
 import { UpdateProfessionalDto } from './dto/update-professional.dto';
 import { CreateProfessionalProfileDto } from '../auth/dto´s/createProfessionalProfile.dto';
-import { ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { Roles } from '../auth/decoradores/role.decorador';
+import { RoleEnum } from '../users/enums/roles';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { RoleGuard } from '../auth/guards/role.guards';
 
 @Controller('professionals')
 export class ProfessionalsController {
   constructor(private readonly professionalsService: ProfessionalsService) {}
 
+
+  @Roles(RoleEnum.Admin)
+  @UseGuards(AuthGuard, RoleGuard)
   @ApiParam({name: 'userDni', type: 'string', required: true})
   @Post(':userDni')
   async createProfessional(
@@ -22,6 +29,9 @@ export class ProfessionalsController {
     }
   }
 
+
+  @Roles(RoleEnum.Professional, RoleEnum.Admin)
+  @UseGuards(AuthGuard, RoleGuard)
   @ApiQuery({name: 'page', type: 'string', required: false})
   @ApiQuery({name: 'limit', type: 'string', required: false})
   @Get()
@@ -45,6 +55,8 @@ export class ProfessionalsController {
   }
 
 
+  @Roles(RoleEnum.Professional, RoleEnum.Admin)
+  @UseGuards(AuthGuard, RoleGuard)
   @ApiParam({name: 'id', type: 'string', required: true})
   @Patch(':id')
   async updateProfessional(
@@ -58,6 +70,9 @@ export class ProfessionalsController {
   }
 
 
+  @ApiBearerAuth()
+  @Roles(RoleEnum.Professional, RoleEnum.Admin)
+  @UseGuards(AuthGuard, RoleGuard)
   @ApiParam({name: 'id', type: 'string', required: true})
   @Delete(':id')
   async remove(@Param('id') id: string) {

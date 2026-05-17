@@ -20,69 +20,75 @@ export class ProfessionalProfileRepository {
 
     ) { }
 
-async createProfessional(
-  user: User,
-  categories: Categories[],
-  license?: string[],
-  description?: string
-) {
-  const newProfessional = this.professionalProfileRepository.create({
-    user: user,
-    categories: categories, 
-    license: license,       
-    description: description,
-    status: ProfessionalStatusEnum.Pendiente,
-  });
+    async createProfessional(
+        user: User,
+        categories: Categories[],
+        license?: string[],
+        description?: string
+    ) {
+        const newProfessional = this.professionalProfileRepository.create({
+            user: user,
+            categories: categories,
+            license: license,
+            description: description,
+            status: ProfessionalStatusEnum.Pendiente,
+        });
 
-  return await this.professionalProfileRepository.save(newProfessional);
-}
+        return await this.professionalProfileRepository.save(newProfessional);
+    }
 
-    async findById(id: string){
+    async findById(id: string) {
         return await this.professionalProfileRepository.findOne({
-            where: {id: id},
-            relations:['user','appointments','categories']
+            where: { id: id },
+            relations: [
+                'user',
+                'appointments',
+                'categories',
+                'appointments.client',       
+                'appointments.professional', 
+                'appointments.professional.user']
         })
     }
 
 
-    async updateProfessional (id: string, updateProfessionalDto: UpdateProfessionalDto){
+    async updateProfessional(id: string, updateProfessionalDto: UpdateProfessionalDto) {
         const foundProfessional = await this.professionalProfileRepository.findOne({
-            where: {id: id},
-            relations: ['user', 'appointments','categories']
+            where: { id: id },
+            relations: ['user', 'appointments', 'categories']
         })
-        if(!foundProfessional) throw new NotFoundException('Profesional no encontrado')
+        if (!foundProfessional) throw new NotFoundException('Profesional no encontrado')
 
-            for(const key in updateProfessionalDto){
-                if(updateProfessionalDto[key] !== undefined){
-                    foundProfessional[key] = updateProfessionalDto[key]
-                }
+        for (const key in updateProfessionalDto) {
+            if (updateProfessionalDto[key] !== undefined) {
+                foundProfessional[key] = updateProfessionalDto[key]
             }
+        }
 
         return await this.professionalProfileRepository.save(foundProfessional)
     }
 
 
-    async findProfessionals (skip?: number, take?: number){
+    async findProfessionals(skip?: number, take?: number) {
         return await this.professionalProfileRepository.find({
             skip,
             take,
-            relations: ['user','appointments', 'categories']
+            relations: ['user', 'appointments', 'categories']
         })
     }
 
 
 
 
-    async remove(id: string){
-       const foundProfessional = await this.professionalProfileRepository.findOne({
-        where: {id: id},
-        relations: ['user']
-       })
-       if (!foundProfessional) throw new NotFoundException('Professional no encontrado')
+    async remove(id: string) {
+        const foundProfessional = await this.professionalProfileRepository.findOne({
+            where: { id: id },
+            relations: ['user']
+        })
+        if (!foundProfessional) throw new NotFoundException('Professional no encontrado')
 
-       foundProfessional.is_active = false
+        foundProfessional.is_active = false
 
-       return await this.professionalProfileRepository.save(foundProfessional)
+        return await this.professionalProfileRepository.save(foundProfessional)
     }
 
 
@@ -91,7 +97,7 @@ async createProfessional(
     async findByLicense(license: string[]) {
         return await this.professionalProfileRepository
             .createQueryBuilder('profile')
-            .where('profile.license && :license', {license})
+            .where('profile.license && :license', { license })
             .getOne()
     }
 }

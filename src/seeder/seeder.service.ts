@@ -66,6 +66,7 @@ export class SeederService {
                         ...professionals,
                         first_name: this.mayuscula(professionals.first_name),
                         last_name: this.mayuscula(professionals.last_name),
+                        password: passHash,
                         province: this.mayuscula(professionals.province),
                         city: this.mayuscula(professionals.city),
                         address: this.mayuscula(professionals.address),

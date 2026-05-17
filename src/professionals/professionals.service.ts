@@ -1,7 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateProfessionalDto } from './dto/update-professional.dto';
 import { CreateProfessionalProfileDto } from '../auth/dto´s/createProfessionalProfile.dto';
-import { UsersService } from '../users/users.service';
 import { ProfessionalProfileRepository } from './professionals.repository';
 import { ResponseProfessionalsDto } from './dto/response.professionals.dto';
 import { ProfessionalProfile } from './entities/professional.entity';
@@ -31,7 +30,20 @@ export class ProfessionalsService {
       license: prof.license,
       description: prof.description,
       is_active: prof.is_active,
-      appointments: prof.appointments || []
+      appointments: prof.appointments.map( app => ({
+        firstName_professional: app.professional.user.first_name,
+        lastName_professional: app.professional.user.last_name,
+        date: app.date,
+        hour: app.hour,
+        desctription: app.description,
+        address: app.address,
+        price: app.price,
+        paymentMethod: app.paymentMethod,
+        isPaid: app.isPaid,
+        status: app.status,
+        firstName_client: app.client.first_name,
+        lastName_client: app.client.last_name
+      }))
     };
   }
 
@@ -106,7 +118,8 @@ export class ProfessionalsService {
       if (existingLicense) throw new ConflictException('Licencias ya existentes.')
     }
 
-    return await this.professionalRepository.updateProfessional(id, updateProfessionalDto)
+    const updateProfessional = await this.professionalRepository.updateProfessional(id, updateProfessionalDto)
+    return this.mapToResponseDto(updateProfessional)
   }
 
 

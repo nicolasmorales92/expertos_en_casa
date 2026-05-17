@@ -2,14 +2,18 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, Up
 import { User } from '../../users/entities/user.entity';
 import { ProfessionalProfile } from '../../professionals/entities/professional.entity';
 import { AppointmentStatusEnum } from '../enum/statusAppointments.enum';
+import { PaymentMethodEnum } from '../enum/paymentMethod.enum';
 
 @Entity('appointments')
 export class Appointment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'timestamp', nullable: false })
-  date: Date; // Cuándo es el turno (día y hora)
+  @Column({ type: 'date', nullable: false })
+  date: string; 
+
+  @Column({type: 'time', nullable: false})
+  hour: string
 
   @Column({ type: 'varchar' , nullable: false})
   description: string; 
@@ -30,6 +34,12 @@ export class Appointment {
   @Column({ default: false })
   isPaid: boolean;
 
+  @Column({
+    type : 'enum',
+    enum: PaymentMethodEnum
+  })
+  paymentMethod: PaymentMethodEnum
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -41,4 +51,7 @@ export class Appointment {
 
   @ManyToOne(() => ProfessionalProfile, (profesional) => profesional.appointments, { nullable: false })
   professional: ProfessionalProfile;
+
+  @Column({ type: 'text', nullable: true })
+  rejectionReason?: string;
 }

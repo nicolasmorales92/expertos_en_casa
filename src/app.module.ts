@@ -4,7 +4,7 @@ import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ProfessionalsProfileModule } from './professionals/professionals.module';
 import { SeederModule } from './seeder/seeder.module';
-import { ConfigModule  } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { ProfessionalProfile } from './professionals/entities/professional.entity';
@@ -16,6 +16,7 @@ import { Chat } from './chat/entities/chat.entity';
 import { Message } from './messages/entities/message.entity';
 import { Appointment } from './appointments/entity/appointment.entity';
 import { Categories } from './categories/entities/category.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -23,9 +24,9 @@ import { Categories } from './categories/entities/category.entity';
 
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DATABASE_URL, 
+      url: process.env.DATABASE_URL,
       synchronize: true,
-      dropSchema: true,
+      dropSchema: false,
       entities: [User, ProfessionalProfile, Chat, Message, Appointment, Categories]
     }),
     UsersModule,
@@ -35,7 +36,12 @@ import { Categories } from './categories/entities/category.entity';
     AuthModule,
     AppointmentsModule,
     MessagesModule,
-    ChatModule],
+    ChatModule,
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1h' }
+    })],
   providers: [AppService],
 })
 export class AppModule { }

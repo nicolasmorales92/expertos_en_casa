@@ -1,7 +1,6 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserProfessionalDto } from './dto´s/createUser.dto';
 import { UserRepository } from '../users/users.repository';
-import { ProfessionalProfileRepository } from '../professionals/professionals.repository';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
@@ -10,6 +9,8 @@ import { ProfessionalProfile } from '../professionals/entities/professional.enti
 import { ResponseCreateUserDto } from './dto´s/reponse.createUser.dto';
 import { ProfessionalStatusEnum } from '../professionals/enum/status';
 import { CategoriesService } from '../categories/categories.service';
+import { LoginDto } from './dto´s/login.dto';
+import { JwtService } from "@nestjs/jwt";
 
 
 @Injectable()
@@ -20,8 +21,8 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     @InjectRepository(ProfessionalProfile)
     private readonly professionalProfileRepo: Repository<ProfessionalProfile>,
-    private readonly professionalProfileRepository: ProfessionalProfileRepository,
-    private readonly categoriesService: CategoriesService
+    private readonly categoriesService: CategoriesService,
+    private readonly jwtService : JwtService
   ) { }
 
   private async createProfessionalProfile(
@@ -104,5 +105,39 @@ export class AuthService {
       message: `Se creó correctamene el usuario ${savedUser.first_name}`
     }
   }
+
+
+
+  async loginUser(user: LoginDto) {
+    const foundUser = await this.userRepository.findByEmail(user.email);
+    if (!foundUser) {
+        throw new UnauthorizedException('Usuario y/o contraseña incorrecto');
+    }
+
+    console.log("user password: ",foundUser.password)
+    const validPassword = await bcrypt.compare(user.password, foundUser.password);
+    if (!validPassword) {
+        throw new UnauthorizedException('Usuario y/o contraseña incorrecto');
+    }
+
+    const payload = {
+        sub: foundUser.id, 
+        id: foundUser.id,
+        role: foundUser.role,
+    };
+
+    console.log("payload password: ",payload)
+
+    try {
+        const token = await this.jwtService.signAsync(payload);
+        return { 
+            success: 'Usuario logueado exitosamente', 
+            token 
+        };
+    } catch (error) {
+        console.error("Error al firmar el token:", error);
+        throw new InternalServerErrorException('Error al generar el acceso');
+    }
+}
 
 }

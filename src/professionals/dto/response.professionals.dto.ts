@@ -1,9 +1,5 @@
-import { Expose, Type } from "class-transformer";
-import { ValidateNested } from "class-validator";
+import { ResponseAppointmentProfessionals } from "../../appointments/dto/response.appointmentsProfessionals.dto";
 import { ResponseCreateUserDto } from "../../auth/dto´s/reponse.createUser.dto";
-import { CategoryEnum } from "../enum/category";
-import { ResponseAppointmentsDto } from "../../appointments/dto/response.appointments.dto";
-import { Categories } from "../../categories/entities/category.entity";
 import { ResponseCategoriesDto } from "../../categories/dto/response.categories.dto";
 
 export class ResponseProfessionalsDto {
@@ -13,5 +9,5 @@ export class ResponseProfessionalsDto {
     license?: string[]
     description?: string
     is_active: boolean
-    appointments: ResponseAppointmentsDto[]
+    appointments: ResponseAppointmentProfessionals[]
 }
